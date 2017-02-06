@@ -1,0 +1,190 @@
+
+<section id="content">
+
+    <div class="page page-fullwidth-layout">
+
+        <div class="pageheader">
+
+            <h2>{$data.module_name}</h2>
+
+            <div class="page-bar">
+
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="{:url('/admin')}"><i class="fa fa-home"></i> 起始页</a>
+                    </li>
+                    <li>
+                        <a href="{:url($data.module_url)}">{$data.module_name}列表</a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- page content -->
+        <div class="pagecontent">
+             <!-- search-box -->
+            <!-- row -->
+            <div class="row">
+                <!-- col -->
+                <div class="col-md-12">
+
+                    <!-- tile -->
+                    <section class="tile">
+
+                        <!-- tile header -->
+                        <div class="tile-header dvd dvd-btm">
+                            <h1 class="custom-font"><strong>{$data.module_name}</strong> 列表</h1>
+                            <ul class="controls">
+                                <li><a href="{:url($data.module_url.'create')}"><i class="fa fa-plus mr-5"></i> 新增</a></li>
+                            </ul>
+                        </div>
+                        <!-- /tile header -->
+
+                        <!-- tile body -->
+                        <div class="tile-body">
+                           <div class="alert alert-info" style="display:none;">显示一些提示信息</div>
+
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-custom" id="products-list">
+                                    <thead>
+                                        <tr>
+                                            <th width="300">ID</th>
+                                            <th>分类名称</th>
+                                            <th>分类pid</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {volist name="list" id="vo"}
+                                            {if condition="$vo.pid eq 0"}
+                                                <tr id="tr_{$vo.id}">
+                                                    <td>{$vo.id}</td>
+                                                    <td>{if condition="$vo.subordinate"}<img src="{$Think.config.__PUBLIC__}/static/images/aaOn.png" id="lowest{$vo.id}" onclick="clicked(this);">{/if}　{$vo.name}</td>
+                                                    <td>{$vo.pid}</td>
+                                                    <td>[<a href="{:url($data.module_url.'read/'.$vo.id)}">编辑</a>][<a href="javascript:;" onclick="if(confirm('确定要删除该分类吗,如有分类的文章也会删除')){ deleteData({$vo.id})}">删除</a>]</td>
+                                                </tr>
+                                                {if condition="$vo.subordinate"}
+                                                    {volist name="vo.subordinate" id="vos"}
+                                                        {if  condition="$vos.subordinatee"}
+                                                            <tr class="lowest{$vo.id}" style="display:none;" id="tr_{$vos.id}">
+                                                                <td>{$vos.id}</td>
+                                                                <td>{if condition="$vos.subordinatee"}　<img src="{$Think.config.__PUBLIC__}/static/images/aaOn.png" id="lowests{$vos.id}" onclick="clickeds(this);">{/if}　------{$vos.name}</td>
+                                                                <td>{$vos.pid}</td>
+                                                                <td>[<a href="{:url($data.module_url.'read/'.$vos.id)}">编辑</a>][<a href="javascript:;" onclick="if(confirm('确定要删除该分类吗,如有分类的文章也会删除')){ deleteData({$vos.id})}">删除</a>]</td>
+                                                            </tr>
+                                                            {volist name="vos.subordinatee" id="voss"}
+                                                                <tr class="lowests{$vos.id}" style="display:none;" id="tr_{$voss.id}">
+                                                                    <td>{$voss.id}</td>
+                                                                    <td>　　　　---------{$voss.name}</td>
+                                                                    <td>{$voss.pid}</td>
+                                                                    <td>[<a href="{:url($data.module_url.'read/'.$voss.id)}">编辑</a>][<a href="javascript:;" onclick="if(confirm('确定要删除该分类吗,如有分类的文章也会删除')){ deleteData({$voss.id})}">删除</a>]</td>
+                                                                </tr>
+                                                            {/volist}
+                                                        {else /}
+                                                            <tr class="lowest{$vo.id}" style="display:none;" id="tr_{$vos.id}">
+                                                                <td>{$vos.id}</td>
+                                                                <td>　　&nbsp;&nbsp;------{$vos.name}</td>
+                                                                <td>{$vos.pid}</td>
+                                                                <td>[<a href="{:url($data.module_url.'read/'.$vos.id)}">编辑</a>][<a href="javascript:;" onclick="if(confirm('确定要删除该分类吗,如有分类的文章也会删除')){ deleteData({$vos.id})}">删除</a>]</td>
+                                                            </tr>
+                                                        {/if}
+                                                    {/volist}
+                                                {/if}
+                                            {else /}
+                                                <tr id="tr_{$vo.id}">
+                                                    <td>{$vo.id}</td>
+                                                    <td>{$vo.name}</td>
+                                                    <td>{$vo.pid}</td>
+                                                    <td>[<a href="{:url($data.module_url.'read/'.$voss.id)}">编辑</a>][<a href="javascript:;" onclick="if(confirm('确定要删除该分类吗,如有分类的文章也会删除')){ deleteData({$voss.id})}">删除</a>]</td>
+                                                </tr>
+                                            {/if}
+                                        {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /tile body -->
+
+                    </section>
+                    <!-- /tile -->
+
+                </div>
+                <!-- /col -->
+            </div>
+            <!-- /row -->
+
+
+
+
+        </div>
+        <!-- /page content -->
+        <script type="text/javascript">
+            var one = 1;
+            var two = 1;
+
+        function deleteData(id){
+            $.ajax({
+                type:"POST",
+                url:"{:url($data.module_url.'delete')}/"+id,
+                success:function(data){
+                    if(data.error == 0){
+                        $($('#tr_'+id).selector).remove();
+                    }
+                    $('.alert').html(data.msg).show();
+                    setTimeout(function() {
+                        $('.alert').hide();
+                    }, 3000);
+                }
+            });
+        }
+
+        function updateExpireTime(id){
+            $.ajax({
+                type:"POST",
+                url:"{:url($data.module_url.'update_expire_time')}/"+id,
+                success:function(data){
+                    if(data.error == 0){
+                        $('#tr_'+data.id+' .expire_time').html(data.expire_time);
+                    }
+                    $('.alert').html(data.msg).show();
+                    setTimeout(function() {
+                        $('.alert').hide();
+                    }, 3000);
+                }
+            });
+        }
+
+        function clicked(obj){
+            var id = obj.id;
+            if(one == 1){
+                $('.'+id).css('display','');
+                $('#'+id).attr('src',"../../static/images/aaOff.png");
+                one = 2;
+            } else {
+                $('.'+id).css('display','none');
+                // $('.'+pid).css('display','none');
+                $('#'+id).attr('src',"../../static/images/aaOn.png");
+                one = 1;
+            }
+        }
+
+        function clickeds(obj){
+            var id = obj.id;
+            if(two == 1){
+                $('.'+id).css('display','');
+                $('#'+id).attr('src',"../../static/images/aaOff.png");
+                two = 2;
+            } else {
+                $('.'+id).css('display','none');
+                $('#'+id).attr('src',"../../static/images/aaOn.png");
+                two = 1;
+            }
+        }
+        </script>
+    </div>
+
+</section>
+<!--/ CONTENT -->
+

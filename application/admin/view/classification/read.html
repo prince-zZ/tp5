@@ -1,0 +1,100 @@
+<section id="content">
+    <div class="page page-fullwidth-layout">
+        <div class="pageheader">
+            <h2>{$data.module_name}</h2>
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="{:url('/admin')}"><i class="fa fa-home"></i> 起始页</a>
+                    </li>
+                    <li>
+                        <a href="{:url('/module_url')}">{$data.module_name}</a>
+                    </li>
+                    <li>
+                        编辑{$data.module_name}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="pagecontent">
+            <div class="add-nav">
+                <div class="nav-heading">
+                    <h3>编辑{$data.module_name}</h3>
+                    <span class="controls pull-right">
+                        <a href="{:url($data.module_url)}" class="btn btn-ef btn-ef-1 btn-ef-1-default btn-ef-1a btn-rounded-20 mr-5" data-toggle="tooltip" title="返回"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+                    </span>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <section class="tile">
+                            <div class="tile-header dvd dvd-btm">
+                                <h1 class="custom-font"><strong>编辑 </strong> 基本信息</h1>
+                            </div>
+                            <div class="tile-body">
+
+                                <form role="form" enctype="multipart/form-data" action="{:url($data.module_url).'update/'}" method="post">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label>分类名称</label>
+                                                <input type="text" class="form-control " name="name" value="{$item.name}">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="id" value="{$item.id}">
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label>上级分类</label>
+                                                <select class="form-control " name="pid" id="">
+                                                    {if condition="$item.pid eq 0"} 
+                                                    <option>顶级分类</option>
+                                                    {/if}
+                                                    {volist name="list" id="vo"}
+                                                        {if condition="$vo.id eq $item.pid"} 
+                                                            <option value="{$vo.id}" selected>{$vo.name}</option>
+                                                        {else /} 
+                                                            <option value="{$vo.id}">{$vo.name}</option>
+                                                        {/if}
+                                                        {volist name="vo.subordinate" id="vos"}
+                                                            {if condition="$vos.id eq $item.pid"} 
+                                                                <option value="{$vos.id}" selected>-----{$vos.name}</option>
+                                                            {else /} 
+                                                                <option value="{$vos.id}">-----{$vos.name}</option>
+                                                            {/if}
+                                                            {volist name="vos.subordinatee" id="voss"}
+                                                                {if condition="$voss.id eq $item.pid"} 
+                                                                    <option value="{$voss.id}" selected>--------{$voss.name}</option>
+                                                                {else /} 
+                                                                    <option value="{$voss.id}">--------{$voss.name}</option>
+                                                                {/if}
+                                                            {/volist}
+                                                        {/volist}
+                                                    {/volist}
+                                                </select>
+                                                <em style="color: #f00;">顶级分类则无父分类</em>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label>分类唯一标志</label>
+                                                <input type="text" class="form-control " name="markname" value="{$item.markname}">
+                                                <em style="color: #f00;">分类链接的网址标识</em>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="form-group">
+                                                <label>分类排序</label>
+                                                <input type="text" class="form-control " name="num" value="{$item.num}">
+                                                <em style="color: #f00;">数字越大越靠前</em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-lg btn-primary" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;提交</button>
+                    			</form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
